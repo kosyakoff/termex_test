@@ -25,14 +25,19 @@ class CommunicationManager {
 
     private var mContext: Context?
     private var webView: WebView
-    private var arrayIndex = 50
+    private var arrayIndex = 100
     private var margin = 20
     private var xWindow = 100
+    private var maxX = 500
+    private var xStart = 0
+    private var xEnd = 0
     private var initArray1 =
         MutableList<Pair<Int,Int>>(arrayIndex) { ind -> Pair(ind, Random.nextInt(-margin,margin)) }
 
     private var initArray2 =
         MutableList<Pair<Int,Int>>(arrayIndex) { ind -> Pair(ind, Random.nextInt(-margin,margin)) }
+
+    private var stopUpdate = false
 
     private fun updateDataWithArray()
     {
@@ -42,7 +47,24 @@ class CommunicationManager {
         var arrayString2 = initArray2.toString()
         arrayString2 = arrayString2.replace('(','[').replace(')',']')
 
-        Handler(Looper.getMainLooper()).post {webView.loadUrl("javascript:updateData(${arrayString1},${arrayString2},0,$arrayIndex)")}
+        xStart = 0
+        xEnd = arrayIndex
+
+        Handler(Looper.getMainLooper()).post {webView.loadUrl("javascript:updateData(${arrayString1},${arrayString2},0,$xEnd)")}
+    }
+
+    @JavascriptInterface
+    fun showAll()
+    {
+        xStart = 0
+        xEnd = maxX
+        stopUpdate = true
+    }
+
+    @JavascriptInterface
+    fun lastPoint()
+    {
+        stopUpdate = false
     }
 
     @JavascriptInterface
@@ -60,10 +82,17 @@ class CommunicationManager {
             }
         }
 
-        Timer().scheduleAtFixedRate(timerTask, 0L, 500L)
+        Timer().scheduleAtFixedRate(timerTask, 0L, 1500L)
     }
 
     private fun appendData() {
+
+        if (!stopUpdate)
+        {
+            xStart = arrayIndex - xWindow
+            xEnd = arrayIndex
+        }
+
         val appendArray1 = MutableList<Pair<Int,Int>>(0) { Pair(0,0)}
         appendArray1.add(0, Pair(arrayIndex, Random.nextInt(-margin,margin)))
         var arrayString1 = appendArray1.toString()
@@ -74,7 +103,7 @@ class CommunicationManager {
         var arrayString2 = appendArray2.toString()
         arrayString2 = arrayString2.replace('(','[').replace(')',']')
 
-        Handler(Looper.getMainLooper()).post {webView.loadUrl("javascript:updateData(${arrayString1},${arrayString2},${arrayIndex - xWindow},$arrayIndex)")}
+        Handler(Looper.getMainLooper()).post {webView.loadUrl("javascript:updateData(${arrayString1},${arrayString2},${xStart},$xEnd)")}
 
         arrayIndex++
     }

@@ -2,7 +2,12 @@
 <body>
 <h1>Demo</h1>
 
-<div id="chart"></div>
+<div>
+    <div id="buttons"><button onclick="showAll()">Show all</button>
+        <button onclick="lastPoint()">Last point</button></div>
+    <div id="chart"></div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 
@@ -45,7 +50,7 @@
             enabled: true,
             easing: 'linear',
             dynamicAnimation: {
-              speed: 100
+              speed: 1000
             }
           } },
                 series: [{
@@ -73,6 +78,27 @@
 ////////////
 
 CommunicationManager.startChart();
+
+            function showAll()
+            {
+                CommunicationManager.showAll();
+            }
+
+        function lastPoint()
+        {
+                CommunicationManager.lastPoint();
+        }
+
+
+            function updateAxis(xmin, xmax)
+            {
+                    chart.updateOptions({
+                  xaxis: {
+                    min: xmin,
+                    max: xmax,
+                  }
+                })
+            }
 
             function updateData(str1,str2, xmin, xmax) {
 
