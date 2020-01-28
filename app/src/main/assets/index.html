@@ -1,0 +1,97 @@
+<html>
+<body>
+<h1>Demo</h1>
+
+<div id="chart"></div>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+
+                 var options = {
+                chart: { type: 'line',
+                width: '900',
+                height: '450',
+
+                    zoom: {
+          enabled: true,
+          type: 'y',
+          autoScaleYaxis: false,
+          zoomedArea: {
+            fill: {
+              color: '#90CAF9',
+              opacity: 0.4
+            },
+            stroke: {
+              color: '#0D47A1',
+              opacity: 0.4,
+              width: 1
+            }
+          }
+      },
+
+
+ toolbar: {
+        show: true,
+        tools: {
+          download: false,
+          selection: false,
+          //zoom: true,
+          zoomin: true,
+//          zoomout: true,
+          pan: true
+        },
+        autoSelected: 'pan'
+      },
+                animations: {
+            enabled: true,
+            easing: 'linear',
+            dynamicAnimation: {
+              speed: 100
+            }
+          } },
+                series: [{
+                    name:"graph1",
+                    data: [[0,0]]
+                },
+                {
+                    name:"graph2",
+                    data: [[0,0]]
+                }
+                ],
+                xaxis: {
+                  type: 'numeric'
+                },
+                                yaxis: {
+                  type: 'numeric',
+                  min: -50,
+                  max: 50
+                }
+            }
+            var chart = new ApexCharts(document.querySelector("#chart"), options);
+            
+            chart.render();
+
+////////////
+
+CommunicationManager.startChart();
+
+            function updateData(str1,str2, xmin, xmax) {
+
+chart.updateOptions({
+          xaxis: {
+            min: xmin,
+            max: xmax,
+          }
+        })
+
+            chart.appendData([{
+            data: str1
+        },
+        {
+            data: str2
+        }
+        ])
+      }
+
+</script>
+</body>
+</html>
