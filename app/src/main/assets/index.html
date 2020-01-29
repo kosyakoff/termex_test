@@ -1,88 +1,119 @@
+<!doctype html>
 <html>
-  <script type="text/javascript" src="moment.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script>
-<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@latest/dist/chartjs-plugin-streaming.min.js"></script>
 
-<style>
-  .myChartDiv {
-    max-width: 600px;
-    max-height: 400px;
-  }
-</style>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
+
+  <style>
+    canvas {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .myChartDiv {
+      max-width: 900px;
+      max-height: 400px;
+    }
+  </style>
+</head>
 
 <body>
   <div class="myChartDiv">
-    <canvas id="myChart" width="600" height="400"></canvas>
+    <canvas id="canvas"></canvas>
   </div>
-</body>
+  <script>
 
-</html>
+var dragOptions = {
+			animationDuration: 1000
+		};
 
-<script>
-  var ctx = document.getElementById("myChart");
-  var myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
 
-      datasets: [{
-        data: []
-      }, {
-        data: []
-      }]
-    },
-    options: {
-      scales: {
-        xAxes: [{
-
-          type: 'realtime',
-						realtime: {
-							duration: 20000,
-							refresh: 1000,
-							delay: 2000,
-							onRefresh: onRefresh
-						}
-
+    var config = {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: 'My First dataset',
+          data: [],
+          fill: false
+        }, {
+          label: 'My Second dataset',
+          fill: false,
+          data: [],
         }]
       },
-      plugins: {
-        zoom: {
-          // Container for pan options
-          pan: {
-            // Boolean to enable panning
-            enabled: true,
-
-            // Panning directions. Remove the appropriate direction to disable
-            // Eg. 'y' would only allow panning in the y direction
-            mode: 'xy'
-          },
-
-          // Container for zoom options
+      options: {
+        elements: {
+            line: {
+                tension: 0 // disables bezier curves
+            }
+        },
+        animation: {
+            duration: 0 // general animation time
+        },
+        hover: {
+            animationDuration: 0 // duration of animations when hovering an item
+        },
+        responsiveAnimationDuration: 0, // animation duration after a resize
+        responsive: true,
+        scales: {
+          xAxes: [{
+            type: 'linear',
+            scaleLabel: {
+              display: true,
+              labelString: 'Date'
+            },
+            ticks: {
+              maxRotation: 0,
+              minRotation: 0
+            }
+          }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'value',
+              ticks: {
+                max: 10,
+                min: -10,
+                stepSize: 1
+            }
+            }
+          }]
+        },
+        plugins: {
           zoom: {
-            // Boolean to enable zooming
-            enabled: true,
-
-            // Zooming directions. Remove the appropriate direction to disable
-            // Eg. 'y' would only allow zooming in the y direction
-            mode: 'xy',
+            zoom: {
+              enabled: true,
+              mode: 'xy',
+              drag: dragOptions
+              //speed: 0.05
+            },
+            pan: {
+              enabled: true,
+              mode: 'xy'
+            }
           }
         }
       }
+    };
+
+    window.onload = function () {
+      var ctx = document.getElementById('canvas').getContext('2d');
+      window.myLine = new window.Chart(ctx, config);
+    };
+
+    function updateData(data1, data2, start, end) {
+
+      window.myLine.data.datasets[0].data.push.apply(window.myLine.data.datasets[0].data, data1);
+      window.myLine.data.datasets[1].data.push.apply(window.myLine.data.datasets[1].data, data2);
+
+      window.myLine.update();
+
     }
-  });
 
-  function onRefresh(chart) {
-			chart.config.data.datasets.forEach(function(dataset) {
-				dataset.data.push({
-					x: Date.now(),
-					y: randomScalingFactor()
-				});
-			});
-		}
+  </script>
+</body>
 
-    function randomScalingFactor() {
-			return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
-		}
-
-</script>
+</html>
