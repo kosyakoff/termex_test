@@ -1,14 +1,20 @@
 package com.arview.termex_web_view_test
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.google.gson.Gson
+import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 import kotlin.concurrent.timerTask
 import kotlin.random.Random
+
 
 data class TimeData(var x: Int, var y: Int)
 
@@ -92,7 +98,6 @@ class CommunicationManager {
         }
         var arrayString1 = gson.toJson(appendArray1)
 
-
         val appendArray2 = MutableList(1) {
             TimeData(
                 arrayIndex,
@@ -118,4 +123,64 @@ class CommunicationManager {
     fun switchToFreeMode() {
         isRealTime = false
     }
+
+    fun getChartImage() {
+        Handler(Looper.getMainLooper()).post {
+            webView.evaluateJavascript(
+                "javascript:getScreenshot()",
+                null
+            )
+        }
+    }
+
+    fun getBitmapFrom64String(base64Str: String) :Bitmap{
+        val base64Image: String = base64Str.split(",").get(1)
+        var imageBytes: ByteArray = Base64.getDecoder().decode(base64Image)
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    }
+
+    @JavascriptInterface
+    fun getChartImageInner(base64Str: String) {
+
+        val decodedImage = getBitmapFrom64String(base64Str)
+
+        saveBitmapToFile(decodedImage)
+    }
+
+    @JavascriptInterface
+    fun getScalesValue(xScaleMin : Double,xScaleMax : Double,yScaleMin : Double, yScaleMax : Double){
+
+    }
+
+    fun saveBitmapToFile(decodedImage : Bitmap)
+    {
+        try {
+
+            val logDirPath = mContext!!.externalCacheDir?.path + "/images"
+            val direct = File(logDirPath)
+
+            if (!direct.exists()) {
+                direct.mkdir()
+            }
+
+            val fileName = "image1.png"
+
+            val file = File(logDirPath + File.separator + fileName)
+
+            file.createNewFile()
+
+            if (file.exists()) {
+
+                val fileOutputStream = FileOutputStream(file, false)
+
+                decodedImage.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+
+                fileOutputStream.close()
+            }
+
+        } catch (e: Exception) {
+            Log.e("", "Error while logging into file : $e")
+        }
+    }
+
 }

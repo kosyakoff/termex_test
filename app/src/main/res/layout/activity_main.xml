@@ -31,12 +31,21 @@
         app:srcCompat="@drawable/ic_refresh_black_24dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/free_btn"
+    android:id="@+id/free_btn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom|end"
+    android:layout_marginRight="90dp"
+    android:layout_marginBottom="@dimen/fab_margin"
+    app:srcCompat="@drawable/ic_center_focus_weak_black_24dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/camera_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="90dp"
+        android:layout_marginRight="180dp"
         android:layout_marginBottom="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_center_focus_weak_black_24dp" />
+        app:srcCompat="@drawable/ic_videocam_black_24dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

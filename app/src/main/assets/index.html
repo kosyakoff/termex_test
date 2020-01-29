@@ -105,29 +105,44 @@
 
       window.onload = function() {
         var ctx = document.getElementById("canvas").getContext("2d");
-        window.myLine = new window.Chart(ctx, config);
+        window.chart = new window.Chart(ctx, config);
+        window.interval = setInterval(() => getScalesValue(), 2000);
       };
 
       function updateData(data1, data2, start, end, shouldUpdateRange) {
-        window.myLine.data.datasets[0].data.push.apply(
-          window.myLine.data.datasets[0].data,
+        window.chart.data.datasets[0].data.push.apply(
+          window.chart.data.datasets[0].data,
           data1
         );
-        window.myLine.data.datasets[1].data.push.apply(
-          window.myLine.data.datasets[1].data,
+        window.chart.data.datasets[1].data.push.apply(
+          window.chart.data.datasets[1].data,
           data2
         );
 
         if (shouldUpdateRange) {
-          var xScale = window.myLine.options.scales.xAxes[0];
+          var xScale = window.chart.options.scales.xAxes[0];
           xScale.ticks = {
             min: start,
             max: end
           };
         }
 
-        window.myLine.update();
+        window.chart.update();
       }
+
+      function getScreenshot()
+      {
+        CommunicationManager.getChartImageInner(window.chart.toBase64Image());
+      }
+
+      function getScalesValue()
+      {
+        var xScale = window.chart.options.scales.xAxes[0].ticks;
+        var yScale = window.chart.options.scales.yAxes[0].ticks;
+
+        CommunicationManager.getScalesValue(xScale.min,xScale.max,yScale.min, yScale.max);
+      }
+
     </script>
   </body>
 </html>

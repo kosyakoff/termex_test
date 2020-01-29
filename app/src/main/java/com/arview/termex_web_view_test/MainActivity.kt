@@ -1,14 +1,20 @@
 package com.arview.termex_web_view_test
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.View.MeasureSpec
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,7 +52,26 @@ class MainActivity : AppCompatActivity() {
             communicationManager.switchToFreeMode()
         }
 
+        camera_btn.setOnClickListener { view ->
+            communicationManager.getChartImage()
+
+           // val bitmap = createBitmapFromView(this, web_view_layout)
+          //  communicationManager.saveBitmapToFile(bitmap!!)
+        }
+
         startCharts()
+    }
+
+    private fun createBitmapFromView(context: Context, view: View): Bitmap? {
+        view.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
+        val bitmap = Bitmap.createBitmap(
+            view.measuredWidth, view.measuredHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
+        view.draw(canvas)
+        return bitmap
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
