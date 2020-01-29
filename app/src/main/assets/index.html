@@ -1,119 +1,133 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
 
-<head>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script>
-  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
+    <style>
+      canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+      }
 
-  <style>
-    canvas {
-      -moz-user-select: none;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-    }
+      .myChartDiv {
+        max-width: 900px;
+        max-height: 400px;
+      }
+    </style>
+  </head>
 
-    .myChartDiv {
-      max-width: 900px;
-      max-height: 400px;
-    }
-  </style>
-</head>
+  <body>
+    <div class="myChartDiv">
+      <canvas id="canvas"></canvas>
+    </div>
+    <script>
+      var dragOptions = {
+        animationDuration: 1000
+      };
 
-<body>
-  <div class="myChartDiv">
-    <canvas id="canvas"></canvas>
-  </div>
-  <script>
-
-var dragOptions = {
-			animationDuration: 1000
-		};
-
-
-    var config = {
-      type: 'line',
-      data: {
-        datasets: [{
-          label: 'My First dataset',
-          data: [],
-          fill: false
-        }, {
-          label: 'My Second dataset',
-          fill: false,
-          data: [],
-        }]
-      },
-      options: {
-        elements: {
+      var config = {
+        type: "line",
+        data: {
+          datasets: [
+            {
+              label: "My First dataset",
+              data: [],
+              fill: false
+            },
+            {
+              label: "My Second dataset",
+              fill: false,
+              data: []
+            }
+          ]
+        },
+        options: {
+          elements: {
             line: {
-                tension: 0 // disables bezier curves
+              tension: 0 // disables bezier curves
             }
-        },
-        animation: {
+          },
+          animation: {
             duration: 0 // general animation time
-        },
-        hover: {
+          },
+          hover: {
             animationDuration: 0 // duration of animations when hovering an item
-        },
-        responsiveAnimationDuration: 0, // animation duration after a resize
-        responsive: true,
-        scales: {
-          xAxes: [{
-            type: 'linear',
-            scaleLabel: {
-              display: true,
-              labelString: 'Date'
-            },
-            ticks: {
-              maxRotation: 0,
-              minRotation: 0
-            }
-          }],
-          yAxes: [{
-            scaleLabel: {
-              display: true,
-              labelString: 'value',
-              ticks: {
-                max: 10,
-                min: -10,
-                stepSize: 1
-            }
-            }
-          }]
-        },
-        plugins: {
-          zoom: {
+          },
+          responsiveAnimationDuration: 0, // animation duration after a resize
+          responsive: true,
+          scales: {
+            xAxes: [
+              {
+                type: "linear",
+                scaleLabel: {
+                  display: true,
+                  labelString: "Date"
+                },
+                ticks: {
+                  maxRotation: 0,
+                  minRotation: 0
+                }
+              }
+            ],
+            yAxes: [
+              {
+                scaleLabel: {
+                  display: true,
+                  labelString: "value",
+                  ticks: {
+                    max: 10,
+                    min: -10,
+                    stepSize: 1
+                  }
+                }
+              }
+            ]
+          },
+          plugins: {
             zoom: {
-              enabled: true,
-              mode: 'xy',
-              drag: dragOptions
-              //speed: 0.05
-            },
-            pan: {
-              enabled: true,
-              mode: 'xy'
+              zoom: {
+                enabled: true,
+                mode: "xy",
+                drag: dragOptions
+                //speed: 0.05
+              },
+              pan: {
+                enabled: true,
+                mode: "xy"
+              }
             }
           }
         }
+      };
+
+      window.onload = function() {
+        var ctx = document.getElementById("canvas").getContext("2d");
+        window.myLine = new window.Chart(ctx, config);
+      };
+
+      function updateData(data1, data2, start, end, shouldUpdateRange) {
+        window.myLine.data.datasets[0].data.push.apply(
+          window.myLine.data.datasets[0].data,
+          data1
+        );
+        window.myLine.data.datasets[1].data.push.apply(
+          window.myLine.data.datasets[1].data,
+          data2
+        );
+
+        if (shouldUpdateRange) {
+          var xScale = window.myLine.options.scales.xAxes[0];
+          xScale.ticks = {
+            min: start,
+            max: end
+          };
+        }
+
+        window.myLine.update();
       }
-    };
-
-    window.onload = function () {
-      var ctx = document.getElementById('canvas').getContext('2d');
-      window.myLine = new window.Chart(ctx, config);
-    };
-
-    function updateData(data1, data2, start, end) {
-
-      window.myLine.data.datasets[0].data.push.apply(window.myLine.data.datasets[0].data, data1);
-      window.myLine.data.datasets[1].data.push.apply(window.myLine.data.datasets[1].data, data2);
-
-      window.myLine.update();
-
-    }
-
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>

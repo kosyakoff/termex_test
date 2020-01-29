@@ -7,26 +7,25 @@ import android.view.MenuItem
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var manager: CommunicationManager
+    lateinit var communicationManager: CommunicationManager
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun startCharts() {
-        manager = CommunicationManager(this, web_view)
+        communicationManager = CommunicationManager(this, web_view)
         val webSettings = web_view.settings
         webSettings.javaScriptEnabled = true
 
-        web_view.addJavascriptInterface(manager, "CommunicationManager")
+        web_view.addJavascriptInterface(communicationManager, "CommunicationManager")
         web_view.webViewClient = object : WebViewClient() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-                manager.start()
+                communicationManager.start()
 
             }
         }
@@ -39,9 +38,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        real_time_btn.setOnClickListener { view ->
+            communicationManager.switchToRealTime()
+        }
+
+        free_btn.setOnClickListener { view ->
+            communicationManager.switchToFreeMode()
         }
 
         startCharts()

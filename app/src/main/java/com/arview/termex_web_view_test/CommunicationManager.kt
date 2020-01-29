@@ -26,49 +26,43 @@ class CommunicationManager {
 
     private var mContext: Context?
     private var webView: WebView
-    private var arrayIndex = 1500
+    private var arrayIndex = 15
     private var margin = 3
-    private var xWindow = 100
-    private var maxX = 500
+    private var xWindow = 10
     private var xStart = 0
     private var xEnd = 0
     private var gson = Gson()
     private var initArray1 =
-        MutableList(arrayIndex) { ind -> TimeData(ind,
-            Random.nextInt(-margin, margin)
-        ) }
+        MutableList(arrayIndex) { ind ->
+            TimeData(
+                ind,
+                Random.nextInt(-margin, margin)
+            )
+        }
 
     private var initArray2 =
-        MutableList(arrayIndex) { ind -> TimeData(ind,
-            Random.nextInt(-margin, margin)
-        ) }
+        MutableList(arrayIndex) { ind ->
+            TimeData(
+                ind,
+                Random.nextInt(-margin, margin)
+            )
+        }
 
-    private var stopUpdate = false
+    private var isRealTime = true
 
-    private fun updateDataWithArray()
-    {
+    private fun updateDataWithArray() {
         var arrayString1 = gson.toJson(initArray1)
         var arrayString2 = gson.toJson(initArray2)
 
         xStart = 0
         xEnd = arrayIndex
 
-        Handler(Looper.getMainLooper()).post { webView.evaluateJavascript("javascript:updateData(${arrayString1},${arrayString2},0,$xEnd)", null)}
-    }
-
-    @JavascriptInterface
-    fun showAll()
-    {
-        xStart = 0
-        xEnd = maxX
-        stopUpdate = true
-
-    }
-
-    @JavascriptInterface
-    fun lastPoint()
-    {
-        stopUpdate = false
+        Handler(Looper.getMainLooper()).post {
+            webView.evaluateJavascript(
+                "javascript:updateData(${arrayString1},${arrayString2},0,$xEnd,false)",
+                null
+            )
+        }
     }
 
     @JavascriptInterface
@@ -87,23 +81,41 @@ class CommunicationManager {
 
     private fun appendData() {
 
-        if (!stopUpdate)
-        {
-            xStart = arrayIndex - xWindow
-            xEnd = arrayIndex
-        }
+        xStart = arrayIndex - xWindow
+        xEnd = arrayIndex
 
-        val appendArray1 = MutableList(1) { TimeData(arrayIndex,
-            Random.nextInt(-margin, margin))}
+        val appendArray1 = MutableList(1) {
+            TimeData(
+                arrayIndex,
+                Random.nextInt(-margin, margin)
+            )
+        }
         var arrayString1 = gson.toJson(appendArray1)
 
 
-        val appendArray2 = MutableList(1) { TimeData(arrayIndex,
-            Random.nextInt(-margin, margin))}
+        val appendArray2 = MutableList(1) {
+            TimeData(
+                arrayIndex,
+                Random.nextInt(-margin, margin)
+            )
+        }
         var arrayString2 = gson.toJson(appendArray2)
 
-        Handler(Looper.getMainLooper()).post {webView.evaluateJavascript("javascript:updateData(${arrayString1},${arrayString2},${xStart},$xEnd)", null)}
+        Handler(Looper.getMainLooper()).post {
+            webView.evaluateJavascript(
+                "javascript:updateData(${arrayString1},${arrayString2},${xStart},$xEnd,$isRealTime)",
+                null
+            )
+        }
 
         arrayIndex++
+    }
+
+    fun switchToRealTime() {
+        isRealTime = true
+    }
+
+    fun switchToFreeMode() {
+        isRealTime = false
     }
 }
