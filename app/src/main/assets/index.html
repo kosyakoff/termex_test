@@ -109,7 +109,15 @@
         window.interval = setInterval(() => getScalesValue(), 2000);
       };
 
-      function updateData(data1, data2, start, end, shouldUpdateRange) {
+
+      function updateData(data1, data2, start, end, shouldUpdateRange, shouldClearPrevData) {
+
+        if (shouldClearPrevData)
+        {
+          window.chart.data.datasets[0].data.length = 0
+          window.chart.data.datasets[1].data.length = 0
+        }
+
         window.chart.data.datasets[0].data.push.apply(
           window.chart.data.datasets[0].data,
           data1

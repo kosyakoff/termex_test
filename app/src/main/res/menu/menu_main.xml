@@ -2,34 +2,60 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.arview.termex_web_view_test.MainActivity">
-    <item
-        android:id="@+id/action_window_time_20_second"
-        android:orderInCategory="100"
-        android:title="@string/window_time_20_second"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_window_time_5_min"
-        android:orderInCategory="200"
-        android:title="@string/window_time_5_min"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_window_time_15_min"
-        android:orderInCategory="300"
-        android:title="@string/window_time_15_min"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_window_time_30_min"
-        android:orderInCategory="400"
-        android:title="@string/window_time_30_min"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_window_time_1_hour"
-        android:orderInCategory="500"
-        android:title="@string/window_time_1_hour"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_window_time_2_hour"
-        android:orderInCategory="600"
-        android:title="@string/window_time_2_hour"
-        app:showAsAction="never" />
+
+    <group android:id="@+id/time_window_group" >
+        <item
+            android:id="@+id/action_window_time_20_second"
+            android:orderInCategory="100"
+            android:title="@string/window_time_20_second"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_window_time_5_min"
+            android:orderInCategory="200"
+            android:title="@string/window_time_5_min"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_window_time_15_min"
+            android:orderInCategory="300"
+            android:title="@string/window_time_15_min"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_window_time_30_min"
+            android:orderInCategory="400"
+            android:title="@string/window_time_30_min"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_window_time_1_hour"
+            android:orderInCategory="500"
+            android:title="@string/window_time_1_hour"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_window_time_2_hour"
+            android:orderInCategory="600"
+            android:title="@string/window_time_2_hour"
+            app:showAsAction="never" />
+    </group>
+    <group android:id="@+id/data_window_group" >
+        <item
+            android:id="@+id/action_init_15_elements"
+            android:orderInCategory="600"
+            android:title="@string/init_15_elements"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_init_150_elements"
+            android:orderInCategory="600"
+            android:title="@string/init_150_elements"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_init_3600_elements"
+            android:orderInCategory="600"
+            android:title="@string/init_3600_elements"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_init_7200_elements"
+            android:orderInCategory="600"
+            android:title="@string/init_7200_elements"
+            app:showAsAction="never" />
+    </group>
+
 </menu>

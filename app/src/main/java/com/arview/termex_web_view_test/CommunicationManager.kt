@@ -18,8 +18,7 @@ import kotlin.random.Random
 
 data class TimeData(var x: Int, var y: Int)
 
-enum class TimeWindowSize(val value: Double)
-{
+enum class TimeWindowSize(val value: Double) {
     Second20(20.0),
     Min5(60 * 5.0),
     Min15(60 * 15.0),
@@ -49,11 +48,9 @@ class CommunicationManager {
     private var arrayIndex = 15
     private var margin = 5
     private var timeWindowWidth = TimeWindowSize.Second20.value
-    private var xStart = 0.0
-    private var xEnd = 0.0
     private var gson = Gson()
     private var initArray1 =
-        MutableList(arrayIndex) { ind ->
+        MutableList(0) { ind ->
             TimeData(
                 ind,
                 Random.nextInt(-margin, margin)
@@ -61,7 +58,7 @@ class CommunicationManager {
         }
 
     private var initArray2 =
-        MutableList(arrayIndex) { ind ->
+        MutableList(0) { ind ->
             TimeData(
                 ind,
                 Random.nextInt(-margin, margin)
@@ -71,15 +68,31 @@ class CommunicationManager {
     private var isRealTime = true
 
     private fun updateDataWithArray() {
-        var arrayString1 = gson.toJson(initArray1)
-        var arrayString2 = gson.toJson(initArray2)
 
-        xStart = 0.0
-        xEnd = arrayIndex.toDouble()
+        initArray1 =
+            MutableList(arrayIndex) { ind ->
+                TimeData(
+                    ind,
+                    Random.nextInt(-margin, margin)
+                )
+            }
+
+        initArray2 =
+            MutableList(arrayIndex) { ind ->
+                TimeData(
+                    ind,
+                    Random.nextInt(-margin, margin)
+                )
+            }
+
+        val arrayString1 = gson.toJson(initArray1)
+        val arrayString2 = gson.toJson(initArray2)
+
+        val xEnd = arrayIndex.toDouble()
 
         Handler(Looper.getMainLooper()).post {
             webView.evaluateJavascript(
-                "javascript:updateData(${arrayString1},${arrayString2},0,$xEnd,false)",
+                "javascript:updateData(${arrayString1},${arrayString2},0,$xEnd,false, true)",
                 null
             )
         }
@@ -101,8 +114,9 @@ class CommunicationManager {
 
     private fun appendData() {
 
-        xStart = if (arrayIndex.toDouble() - timeWindowWidth < 0) 0.0 else  arrayIndex.toDouble() - timeWindowWidth
-        xEnd = arrayIndex.toDouble()
+        val xStart =
+            if (arrayIndex.toDouble() - timeWindowWidth < 0) 0.0 else arrayIndex.toDouble() - timeWindowWidth
+        val xEnd = arrayIndex.toDouble()
 
         val appendArray1 = MutableList(1) {
             TimeData(
@@ -122,7 +136,7 @@ class CommunicationManager {
 
         Handler(Looper.getMainLooper()).post {
             webView.evaluateJavascript(
-                "javascript:updateData(${arrayString1},${arrayString2},${xStart},$xEnd,$isRealTime)",
+                "javascript:updateData(${arrayString1},${arrayString2},${xStart},$xEnd,$isRealTime, false)",
                 null
             )
         }
@@ -147,7 +161,7 @@ class CommunicationManager {
         }
     }
 
-    fun getBitmapFrom64String(base64Str: String) :Bitmap{
+    fun getBitmapFrom64String(base64Str: String): Bitmap {
         val base64Image: String = base64Str.split(",").get(1)
         var imageBytes: ByteArray = Base64.getDecoder().decode(base64Image)
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
@@ -162,7 +176,7 @@ class CommunicationManager {
     }
 
     @JavascriptInterface
-    fun getScalesValue(xScaleMin : Double,xScaleMax : Double,yScaleMin : Double, yScaleMax : Double){
+    fun getScalesValue(xScaleMin: Double, xScaleMax: Double, yScaleMin: Double, yScaleMax: Double) {
 
         currentXScaleMin = xScaleMin
         currentXScaleMax = xScaleMax
@@ -170,8 +184,7 @@ class CommunicationManager {
         currentYScaleMax = yScaleMax
     }
 
-    fun saveBitmapToFile(decodedImage : Bitmap)
-    {
+    fun saveBitmapToFile(decodedImage: Bitmap) {
         try {
 
             val logDirPath = mContext!!.externalCacheDir?.path + "/images"
@@ -203,18 +216,14 @@ class CommunicationManager {
 
     fun setTimeWindow(timeWindowSize: TimeWindowSize) {
 
-        if (isRealTime)
-        {
+        if (isRealTime) {
             timeWindowWidth = timeWindowSize.value
-        }
-        else
-        {
-            val newWindowCenter = currentXScaleMax - (currentXScaleMin/2)
+        } else {
+            val newWindowCenter = currentXScaleMax - (currentXScaleMin / 2)
             var windowStart = newWindowCenter - (timeWindowSize.value / 2)
             var windowEnd = newWindowCenter + (timeWindowSize.value / 2)
 
-            if (windowStart < 0)
-            {
+            if (windowStart < 0) {
                 windowStart = 0.0
                 windowEnd = timeWindowSize.value
             }
@@ -226,6 +235,11 @@ class CommunicationManager {
                 )
             }
         }
+    }
+
+    fun initDataWithValue(initElementSize: Int) {
+        arrayIndex = initElementSize
+        updateDataWithArray()
     }
 
 }

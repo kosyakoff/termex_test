@@ -7,4 +7,8 @@
     <string name="window_time_30_min">30 минут</string>
     <string name="window_time_1_hour">1 час</string>
     <string name="window_time_2_hour">2 часа</string>
+    <string name="init_15_elements">15 элементов</string>
+    <string name="init_150_elements">150 элементов</string>
+    <string name="init_3600_elements">3600 элементов</string>
+    <string name="init_7200_elements">7200 элементов</string>
 </resources>

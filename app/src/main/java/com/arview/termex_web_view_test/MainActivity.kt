@@ -12,6 +12,7 @@ import android.view.View.MeasureSpec
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -77,6 +78,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
+
+        MenuCompat.setGroupDividerEnabled(menu, true)
         return true
     }
 
@@ -109,6 +112,27 @@ class MainActivity : AppCompatActivity() {
                 communicationManager.setTimeWindow(TimeWindowSize.Hour2)
                 return true
             }
+
+            R.id.action_init_15_elements -> {
+                communicationManager.initDataWithValue(15)
+                return true
+            }
+
+            R.id.action_init_150_elements -> {
+                communicationManager.initDataWithValue(150)
+                return true
+            }
+
+            R.id.action_init_3600_elements -> {
+                communicationManager.initDataWithValue(3600)
+                return true
+            }
+
+            R.id.action_init_7200_elements -> {
+                communicationManager.initDataWithValue(7200)
+                return true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
