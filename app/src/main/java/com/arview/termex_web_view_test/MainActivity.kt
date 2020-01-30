@@ -85,7 +85,30 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_window_time_20_second -> {
+                communicationManager.setTimeWindow(TimeWindowSize.Second20)
+                return true
+            }
+            R.id.action_window_time_5_min -> {
+                communicationManager.setTimeWindow(TimeWindowSize.Min5)
+                return true
+            }
+            R.id.action_window_time_15_min -> {
+                communicationManager.setTimeWindow(TimeWindowSize.Min15)
+                return true
+            }
+            R.id.action_window_time_30_min -> {
+                communicationManager.setTimeWindow(TimeWindowSize.Min30)
+                return true
+            }
+            R.id.action_window_time_1_hour -> {
+                communicationManager.setTimeWindow(TimeWindowSize.Hour1)
+                return true
+            }
+            R.id.action_window_time_2_hour -> {
+                communicationManager.setTimeWindow(TimeWindowSize.Hour2)
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

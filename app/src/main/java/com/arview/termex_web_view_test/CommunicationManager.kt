@@ -18,6 +18,16 @@ import kotlin.random.Random
 
 data class TimeData(var x: Int, var y: Int)
 
+enum class TimeWindowSize(val value: Double)
+{
+    Second20(20.0),
+    Min5(60 * 5.0),
+    Min15(60 * 15.0),
+    Min30(60 * 15.0),
+    Hour1(60 * 60.0),
+    Hour2(60 * 120.0)
+}
+
 class CommunicationManager {
     constructor(c: Context, w: WebView) {
         this.mContext = c
@@ -30,13 +40,17 @@ class CommunicationManager {
         startChart()
     }
 
+    private var currentXScaleMin = 0.0
+    private var currentYScaleMin = 0.0
+    private var currentYScaleMax = 0.0
+    private var currentXScaleMax = 0.0
     private var mContext: Context?
     private var webView: WebView
     private var arrayIndex = 15
-    private var margin = 3
-    private var xWindow = 10
-    private var xStart = 0
-    private var xEnd = 0
+    private var margin = 5
+    private var timeWindowWidth = TimeWindowSize.Second20.value
+    private var xStart = 0.0
+    private var xEnd = 0.0
     private var gson = Gson()
     private var initArray1 =
         MutableList(arrayIndex) { ind ->
@@ -60,8 +74,8 @@ class CommunicationManager {
         var arrayString1 = gson.toJson(initArray1)
         var arrayString2 = gson.toJson(initArray2)
 
-        xStart = 0
-        xEnd = arrayIndex
+        xStart = 0.0
+        xEnd = arrayIndex.toDouble()
 
         Handler(Looper.getMainLooper()).post {
             webView.evaluateJavascript(
@@ -87,8 +101,8 @@ class CommunicationManager {
 
     private fun appendData() {
 
-        xStart = arrayIndex - xWindow
-        xEnd = arrayIndex
+        xStart = if (arrayIndex.toDouble() - timeWindowWidth < 0) 0.0 else  arrayIndex.toDouble() - timeWindowWidth
+        xEnd = arrayIndex.toDouble()
 
         val appendArray1 = MutableList(1) {
             TimeData(
@@ -150,6 +164,10 @@ class CommunicationManager {
     @JavascriptInterface
     fun getScalesValue(xScaleMin : Double,xScaleMax : Double,yScaleMin : Double, yScaleMax : Double){
 
+        currentXScaleMin = xScaleMin
+        currentXScaleMax = xScaleMax
+        currentYScaleMin = yScaleMin
+        currentYScaleMax = yScaleMax
     }
 
     fun saveBitmapToFile(decodedImage : Bitmap)
@@ -178,8 +196,35 @@ class CommunicationManager {
                 fileOutputStream.close()
             }
 
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Log.e("", "Error while logging into file : $e")
+        }
+    }
+
+    fun setTimeWindow(timeWindowSize: TimeWindowSize) {
+
+        if (isRealTime)
+        {
+            timeWindowWidth = timeWindowSize.value
+        }
+        else
+        {
+            val newWindowCenter = currentXScaleMax - (currentXScaleMin/2)
+            var windowStart = newWindowCenter - (timeWindowSize.value / 2)
+            var windowEnd = newWindowCenter + (timeWindowSize.value / 2)
+
+            if (windowStart < 0)
+            {
+                windowStart = 0.0
+                windowEnd = timeWindowSize.value
+            }
+
+            Handler(Looper.getMainLooper()).post {
+                webView.evaluateJavascript(
+                    "javascript:updateTimeWindow(${windowStart},${windowEnd})",
+                    null
+                )
+            }
         }
     }
 

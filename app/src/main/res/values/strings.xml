@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">termex_web_view_test</string>
     <string name="action_settings">Settings</string>
+    <string name="window_time_20_second">20 секунд</string>
+    <string name="window_time_5_min">5 минут</string>
+    <string name="window_time_15_min">15 минут</string>
+    <string name="window_time_30_min">30 минут</string>
+    <string name="window_time_1_hour">1 час</string>
+    <string name="window_time_2_hour">2 часа</string>
 </resources>

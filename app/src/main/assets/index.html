@@ -143,6 +143,17 @@
         CommunicationManager.getScalesValue(xScale.min,xScale.max,yScale.min, yScale.max);
       }
 
+      function updateTimeWindow(start, end)
+      {
+        var xScale = window.chart.options.scales.xAxes[0];
+          xScale.ticks = {
+            min: start,
+            max: end
+          };
+
+          window.chart.update();
+      }
+
     </script>
   </body>
 </html>
