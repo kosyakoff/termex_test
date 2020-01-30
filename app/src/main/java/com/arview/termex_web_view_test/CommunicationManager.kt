@@ -15,7 +15,6 @@ import java.util.*
 import kotlin.concurrent.timerTask
 import kotlin.random.Random
 
-
 data class TimeData(var x: Int, var y: Int)
 
 enum class TimeWindowSize(val value: Double) {
@@ -35,7 +34,6 @@ class CommunicationManager {
 
     fun start() {
 
-        //webView.evaluateJavascript("startAll(${chart.toJson()})", null)
         startChart()
     }
 

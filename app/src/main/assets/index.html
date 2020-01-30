@@ -127,6 +127,7 @@
 
     };
 
+    var ticksCount = 10
 
     function getClickData(x, y) {
       CommunicationManager.getClickData(x,y)
@@ -153,7 +154,8 @@
         var xScale = window.chart.options.scales.xAxes[0];
         xScale.ticks = {
           min: start,
-          max: end
+          max: end,
+          stepSize: (end - start) / ticksCount
         };
 
 
