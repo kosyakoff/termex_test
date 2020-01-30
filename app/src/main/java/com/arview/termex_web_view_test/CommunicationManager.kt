@@ -105,8 +105,7 @@ class CommunicationManager {
 
         val timerTask: TimerTask =
             timerTask {
-
-                appendData()
+                    appendData()
             }
 
         Timer().scheduleAtFixedRate(timerTask, 0L, 1000L)
@@ -182,6 +181,14 @@ class CommunicationManager {
         currentXScaleMax = xScaleMax
         currentYScaleMin = yScaleMin
         currentYScaleMax = yScaleMax
+    }
+
+    @JavascriptInterface
+    fun getClickData(xStr: String, yStr: String) {
+
+       var clickedX = xStr.toDoubleOrNull()
+        var clickedY = yStr.toDoubleOrNull()
+
     }
 
     fun saveBitmapToFile(decodedImage: Bitmap) {

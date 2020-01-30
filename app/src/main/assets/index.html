@@ -1,167 +1,190 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
 
-    <style>
-      canvas {
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-      }
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
 
-      .myChartDiv {
-        max-width: 900px;
-        max-height: 400px;
-      }
-    </style>
-  </head>
+  <style>
+    canvas {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
 
-  <body>
-    <div class="myChartDiv">
-      <canvas id="canvas"></canvas>
-    </div>
-    <script>
-      var dragOptions = {
-        animationDuration: 1000
-      };
+    .myChartDiv {
+      max-width: 900px;
+      max-height: 400px;
+    }
+  </style>
+</head>
 
-      var config = {
-        type: "line",
-        data: {
-          datasets: [
+<body>
+  <div class="myChartDiv">
+    <canvas id="canvas"></canvas>
+  </div>
+  <script>
+    var dragOptions = {
+      animationDuration: 1000
+    };
+
+    var config = {
+      type: "line",
+      data: {
+        datasets: [
+          {
+            label: "My First dataset",
+            data: [],
+            fill: false
+          },
+          {
+            label: "My Second dataset",
+            fill: false,
+            data: []
+          }
+        ]
+      },
+      options: {
+
+        tooltips: {
+          enabled: true,
+          intersect: false,
+          callbacks: {
+
+             label: function (tooltipItem, data) {
+              
+              getClickData(tooltipItem.label, tooltipItem.value)
+
+               return tooltipItem.value;
+             }
+          }
+
+        },
+        elements: {
+          line: {
+            tension: 0 // disables bezier curves
+          }
+        },
+        animation: {
+          duration: 0 // general animation time
+        },
+        hover: {
+          animationDuration: 0 // duration of animations when hovering an item
+        },
+        responsiveAnimationDuration: 0, // animation duration after a resize
+        responsive: true,
+        scales: {
+          xAxes: [
             {
-              label: "My First dataset",
-              data: [],
-              fill: false
-            },
+              type: "linear",
+              scaleLabel: {
+                display: true,
+                labelString: "Date"
+              },
+              ticks: {
+                maxRotation: 0,
+                minRotation: 0
+              }
+            }
+          ],
+          yAxes: [
             {
-              label: "My Second dataset",
-              fill: false,
-              data: []
+              scaleLabel: {
+                display: true,
+                labelString: "value",
+                ticks: {
+                  max: 10,
+                  min: -10,
+                  stepSize: 1
+                }
+              }
             }
           ]
         },
-        options: {
-          elements: {
-            line: {
-              tension: 0 // disables bezier curves
-            }
-          },
-          animation: {
-            duration: 0 // general animation time
-          },
-          hover: {
-            animationDuration: 0 // duration of animations when hovering an item
-          },
-          responsiveAnimationDuration: 0, // animation duration after a resize
-          responsive: true,
-          scales: {
-            xAxes: [
-              {
-                type: "linear",
-                scaleLabel: {
-                  display: true,
-                  labelString: "Date"
-                },
-                ticks: {
-                  maxRotation: 0,
-                  minRotation: 0
-                }
-              }
-            ],
-            yAxes: [
-              {
-                scaleLabel: {
-                  display: true,
-                  labelString: "value",
-                  ticks: {
-                    max: 10,
-                    min: -10,
-                    stepSize: 1
-                  }
-                }
-              }
-            ]
-          },
-          plugins: {
+        plugins: {
+          zoom: {
             zoom: {
-              zoom: {
-                enabled: true,
-                mode: "xy",
-                drag: dragOptions
-                //speed: 0.05
-              },
-              pan: {
-                enabled: true,
-                mode: "xy"
-              }
+              enabled: true,
+              mode: "xy",
+              drag: dragOptions
+              //speed: 0.05
+            },
+            pan: {
+              enabled: true,
+              mode: "xy"
             }
           }
         }
-      };
-
-      window.onload = function() {
-        var ctx = document.getElementById("canvas").getContext("2d");
-        window.chart = new window.Chart(ctx, config);
-        window.interval = setInterval(() => getScalesValue(), 2000);
-      };
+      }
+    };
 
 
-      function updateData(data1, data2, start, end, shouldUpdateRange, shouldClearPrevData) {
+    window.onload = function () {
+      var ctx = document.getElementById("canvas").getContext("2d");
+      window.chart = new window.Chart(ctx, config);
+      window.interval = setInterval(() => getScalesValue(), 2000);
 
-        if (shouldClearPrevData)
-        {
-          window.chart.data.datasets[0].data.length = 0
-          window.chart.data.datasets[1].data.length = 0
-        }
+    };
 
-        window.chart.data.datasets[0].data.push.apply(
-          window.chart.data.datasets[0].data,
-          data1
-        );
-        window.chart.data.datasets[1].data.push.apply(
-          window.chart.data.datasets[1].data,
-          data2
-        );
 
-        if (shouldUpdateRange) {
-          var xScale = window.chart.options.scales.xAxes[0];
-          xScale.ticks = {
-            min: start,
-            max: end
-          };
-        }
+    function getClickData(x, y) {
+      CommunicationManager.getClickData(x,y)
+    }
 
-        window.chart.update();
+
+    function updateData(data1, data2, start, end, shouldUpdateRange, shouldClearPrevData) {
+
+      if (shouldClearPrevData) {
+        window.chart.data.datasets[0].data.length = 0
+        window.chart.data.datasets[1].data.length = 0
       }
 
-      function getScreenshot()
-      {
-        CommunicationManager.getChartImageInner(window.chart.toBase64Image());
-      }
+      window.chart.data.datasets[0].data.push.apply(
+        window.chart.data.datasets[0].data,
+        data1
+      );
+      window.chart.data.datasets[1].data.push.apply(
+        window.chart.data.datasets[1].data,
+        data2
+      );
 
-      function getScalesValue()
-      {
-        var xScale = window.chart.options.scales.xAxes[0].ticks;
-        var yScale = window.chart.options.scales.yAxes[0].ticks;
-
-        CommunicationManager.getScalesValue(xScale.min,xScale.max,yScale.min, yScale.max);
-      }
-
-      function updateTimeWindow(start, end)
-      {
+      if (shouldUpdateRange) {
         var xScale = window.chart.options.scales.xAxes[0];
-          xScale.ticks = {
-            min: start,
-            max: end
-          };
+        xScale.ticks = {
+          min: start,
+          max: end
+        };
 
-          window.chart.update();
+
       }
 
-    </script>
-  </body>
+      window.chart.update();
+
+    }
+
+    function getScreenshot() {
+      CommunicationManager.getChartImageInner(window.chart.toBase64Image());
+    }
+
+    function getScalesValue() {
+      var xScale = window.chart.options.scales.xAxes[0].ticks;
+      var yScale = window.chart.options.scales.yAxes[0].ticks;
+
+      CommunicationManager.getScalesValue(xScale.min, xScale.max, yScale.min, yScale.max);
+    }
+
+    function updateTimeWindow(start, end) {
+      var xScale = window.chart.options.scales.xAxes[0];
+      xScale.ticks = {
+        min: start,
+        max: end
+      };
+
+      window.chart.update();
+    }
+
+  </script>
+</body>
+
 </html>
